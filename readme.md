@@ -93,5 +93,8 @@ NOTE:** HomeController inherits from the Controller class which has public metho
 - Select MVC View Page & change name at bottom of popup window to Index.cshtml.
 
 ** By convention, .NET will look for views corresponding to the HomeController in the Home folder within the Views folder.
+- now we can add some html to make a welcome page for our project
 
 ```
+
+7. We can run  to see the result in Browser
