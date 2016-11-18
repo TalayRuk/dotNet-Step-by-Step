@@ -62,7 +62,7 @@ public void ConfigureServices(IServiceCollection services)
 ...
 ```
 
-## Can skip steps 5-7 & jump right to 8-B) to use Migrations
+## To Use Migrations: skip steps 5-7 & jump right to 8-B)  
 
 ##### 5. Add Controller
   - Basic Controller:
