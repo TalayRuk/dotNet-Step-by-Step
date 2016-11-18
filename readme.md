@@ -62,6 +62,8 @@ public void ConfigureServices(IServiceCollection services)
 ...
 ```
 
+## Can skip steps 5-7 & jump right to 8-B) to use Migrations
+
 ##### 5. Add Controller
   - Basic Controller:
 
@@ -169,9 +171,11 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
           ******************************************
             using System.Collections.Generic;
             using System.ComponentModel.DataAnnotations;
+            using System.ComponentModel.DataAnnotations.Schema;
 
             namespace ToDoListWithMigrations.Models
-            {
+            {   [Table("Categories")]
+              //Table Naming Convetion need to be plural
                 public class Category
                 {
                     [Key]
@@ -190,9 +194,11 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
           Models/Item.cs
           ******************************************
           using System.ComponentModel.DataAnnotations;
+          using System.ComponentModel.DataAnnotations.Schema;
+
 
           namespace ToDoListWithMigrations.Models
-          {
+          { [Table("Items")]
             public class Item
             {
                 [Key]
@@ -330,7 +336,7 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
 
     ```
       ToDoListWithMigrations/src/ToDo> dotnet ef migrations add Initial
-     .../ToDo> dotnet ef database update
+      .../ToDo> dotnet ef database update
      //build the tables at the MSSQL
 
     ```
