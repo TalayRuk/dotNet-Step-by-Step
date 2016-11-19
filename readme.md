@@ -7,7 +7,7 @@
 
 ## CREATE A NEW PROJECT IN VISUAL STUDIO
 
-##### 1. Create a new project in Visual Studio called ToDoList. Select Visual C# > .NET Core > ASP.NET Web Application and click OK.
+##### 1. Create a new project (Ctrl+Shift+N) in Visual Studio called ToDoList. Select Visual C# > .NET Core > ASP.NET Web Application and click OK.
 
 #### 2. select Empty underneath ASP.NET Core Templates. Deselect the option to "host in the cloud" if it's selected.
 
@@ -175,7 +175,7 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
 
             namespace ToDoListWithMigrations.Models
             {   [Table("Categories")]
-              //Table Naming Convetion need to be plural
+              //Table Naming Convention need to be plural
                 public class Category
                 {
                     [Key]
@@ -217,7 +217,7 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
     - Right-click Project's name > Add > New Folder name it "Models"
     - Ctrl+Shift+A when Models is highlight Right-click  new item> Add> Class
     - Change name at the bottom of the pop up to ToDoDbContext.cs **(Dont need to change it to have WithMigrations)**
-
+    - More info about Entity Framework (ef) & DbContext http://patrickdesjardins.com/blog/how-to-register-model-builder-without-having-to-manually-add-them-one-by-one
     ```
       Models/ToDoDbContext.cs
       ----------------------------------
@@ -328,15 +328,123 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
     ```
 
   8. We need to compile the existing files before we can create the database
-    - Right-click Project-name in Solution Explore > select Build
+    - Right-click Project-name in Solution Explore > select Build (Ctrl+Shift+B)
     - To check if we have any Errors, we need to correct it before generate database
     - Run Build again once all the errors are corrected
 
   9. in Command Line
+    - If these commands are run from an incorrect folder, then you will get an error stating Unable to resolve project.
 
-    ```
-      ToDoListWithMigrations/src/ToDo> dotnet ef migrations add Initial
-      .../ToDo> dotnet ef database update
-     //build the tables at the MSSQL
+      ```
+        ToDoListWithMigrations/src/ToDo> dotnet ef migrations add Initial
+        .../ToDo> dotnet ef database update
+       //build the tables at the MSSQL
 
-    ```
+      ```
+        - **dotnet ef migrations add Initial** = adds code to the project that Entity Framework will use to update the database.
+        - After running cmd above, the project has a new folder named Migrations, containing this code with file ending *_Initial.cs*
+        - **Note:** migration names should usually be something descriptive. For instance, if we were adding a column to the Item table to indicate whether or not it has been completed, we could name the migration something like like AddCompletedColumn.
+        - **dotnet ef database update** = creates or updates the actual database.
+        - You can see that after running this command, the Project contains an Items and Categories tables.
+        - If you created the initial migration when the database already exists, the database creation code is generated but it doesn't have to run because the database already matches the data model. When you deploy the app to another environment where the database doesn't exist yet, this code will run to create your database, so it's a good idea to test it first. That's why you changed the name of the database in the connection string earlier -- so that migrations can create a new one from scratch.
+
+  10. Connect to MSSQL Server to check if the database created
+      - To save Database to project (we can do this once the ConnectionString property has been initialized.)
+      - Right-click Database-Name: click Task > import data
+
+      ```
+        Server type: Database Engine
+        Server name: (localdb)\MSSQLLocalDB
+        Authentication: Windows Authentication
+      ```
+
+  11. If you need to update the database, for example forgot to make table name into plural:
+      - correct all the table names & Build the project and then add the migration in the command prompt:  
+
+      ```
+        ToDoListWithMigrations/src/ToDo> dotnet ef migrations add MakeTableNamesPlural
+      ```
+
+  12. In order for Entity Framework to update the database with this change, we need to tell it which migration to use.
+      - The migration name is the name of the migration file that is generated.
+      -  When I ran the above migration, Entity Framework created the file *20160413182147_MakeTableNamesPlural.cs.*
+      - To update the database, I'll use this command:     
+
+      ```
+        ToDoListWithMigrations/src/ToDo> dotnet ef database update 20160413182147_MakeTableNamesPlural
+
+        **
+        When we run this command, If we get the following error:
+
+        > Cannot find the object "Items" because it does not exist or you do not have permissions.
+
+      ```
+
+  13. Let's look in the migration file and see what's going on.
+      - In the _MakeTableNamesPlural class_, there's an Up method and a Down method, which is the code that runs when you add or remove a migration from the database, respectively.
+      - Migrations calls the Up method to implement the data model changes for a migration. When you enter a command to roll back the update, Migrations calls the Down method.
+      - The _Up method_ should look something like this:   
+
+        ```
+        Migrations/20160413182147_MakeTableNamesPlural.cs
+        _______________________________________________________________________
+        ...
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+          migrationBuilder.DropForeignKey(name: "FK_Item_Category_CategoryId", table: "Item");
+          migrationBuilder.AddForeignKey(
+              name: "FK_Item_Category_CategoryId",
+              table: "Items",
+              column: "CategoryId",
+              principalTable: "Categories",
+              principalColumn: "CategoryId",
+              onDelete: ReferentialAction.Cascade);
+          migrationBuilder.RenameTable(
+              name: "Item",
+              newName: "Items");
+          migrationBuilder.RenameTable(
+              name: "Category",
+              newName: "Categories");
+        }
+        ...
+
+        ```
+      - **If we get the error Cannot find the object "Items"** : This mean we haven't change our table names in the models yet
+      - We rewrite the code to rename the table to plural using **.RenameTable** like this:
+
+        ```
+        Migrations/20160413182147_MakeTableNamesPlural.cs
+        _____________________________________________________
+        ...
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropForeignKey(name: "FK_Item_Category_CategoryId", table: "Item");
+            migrationBuilder.RenameTable(
+                name: "Item",
+                newName: "Items");
+            migrationBuilder.RenameTable(
+                name: "Category",
+                newName: "Categories");
+            migrationBuilder.AddForeignKey(
+                name: "FK_Item_Category_CategoryId",
+                table: "Items",
+                column: "CategoryId",
+                principalTable: "Categories",
+                principalColumn: "CategoryId",
+                onDelete: ReferentialAction.Cascade);
+        }
+        ...
+
+        ```
+
+      - Now we've renamed the table before adding the foreign key to it. Save the file, and then run the command to update the database:
+
+        ```
+          > dotnet ef database update 20160413182147_MakeTableNamesPlural
+        ```
+
+      - And the names of the tables in the database have been updated!
+
+  14. In the migrations folder >ProjectDbContextModelSnapshot.cs
+      - This also contain the relationship of the tables
+      
