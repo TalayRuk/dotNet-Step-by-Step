@@ -447,4 +447,6 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
 
   14. In the migrations folder >ProjectDbContextModelSnapshot.cs
       - This also contain the relationship of the tables
-      
+
+  15. PROBLEM ** After created migration, When I try to import data from SQl to save to the file, Kept getting:
+      - Cannot save data, there's no connection!
