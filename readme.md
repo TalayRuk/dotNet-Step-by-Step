@@ -274,7 +274,9 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
             {
                 services.AddEntityFramework()
                     .AddDbContext<ToDoDbContext>(options =>
-                        options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+                        options.UseSqlServer(Configuration.GetConnectionStrings("DefaultConnection")));
+                    //The ASP.NET Core Configuration system reads the ConnectionString. For local development, it gets the connection string from the appsettings.json file:
+
             }
 
             public void Configure(IApplicationBuilder app)
@@ -450,3 +452,9 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
 
   15. PROBLEM ** After created migration, When I try to import data from SQl to save to the file, Kept getting:
       - Cannot save data, there's no connection!
+
+  16. Check out for more information about Entity Framework Code First Migrations
+
+      **https://msdn.microsoft.com/en-us/library/jj591621(v=vs.113).aspx**     
+
+#### 9. or Follow along this lesson for Migrations: https://docs.microsoft.com/en-us/ef/core/get-started/aspnetcore/new-db      
