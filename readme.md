@@ -455,6 +455,11 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
 
   16. Check out for more information about Entity Framework Code First Migrations
 
-      **https://msdn.microsoft.com/en-us/library/jj591621(v=vs.113).aspx**     
+      **https://msdn.microsoft.com/en-us/library/jj591621(v=vs.113).aspx**  
+  17. To remove Migration in the Powershell
+      ```
+         dotnet ef migrations remove command.
+      ```   
+    
 
 #### 9. or Follow along this lesson for Migrations: https://docs.microsoft.com/en-us/ef/core/get-started/aspnetcore/new-db      
