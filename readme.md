@@ -466,10 +466,14 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
 #### 9. or Follow along this lesson for Migrations: https://docs.microsoft.com/en-us/ef/core/get-started/aspnetcore/new-db      
 #### 10. To run Migration in Nuget Package Manager Console
   ```
-  for first time running in the project 
-  
-    Run 
-    Enable-Migrations 
+  for first time using Migration in the Visual Studio 
+    Tools ‣ Nuget Package Manager ‣ Package Manager Console
+
+    Execute Install-Package Microsoft.EntityFrameworkCore.Tools -Pre
+    
+  for first time using the migration in each project  
+    Enable-Migrations
+    
     Add-Migration InitialCreate
     Update-Database
     
