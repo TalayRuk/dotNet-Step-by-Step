@@ -343,6 +343,7 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
        //build the tables at the MSSQL
 
       ```
+        
         - **dotnet ef migrations add Initial** = adds code to the project that Entity Framework will use to update the database.
         - After running cmd above, the project has a new folder named Migrations, containing this code with file ending *_Initial.cs*
         - **Note:** migration names should usually be something descriptive. For instance, if we were adding a column to the Item table to indicate whether or not it has been completed, we could name the migration something like like AddCompletedColumn.
@@ -463,3 +464,36 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
     
 
 #### 9. or Follow along this lesson for Migrations: https://docs.microsoft.com/en-us/ef/core/get-started/aspnetcore/new-db      
+#### 10. To run Migration in Nuget Package Manager Console
+  ```
+  for first time running in the project 
+  
+    Run 
+    Enable-Migrations 
+    Add-Migration InitialCreate
+    Update-Database
+    
+    to Add more feature
+    
+    Add-Migration Add..
+    Update-Database
+    
+    to Delete
+    Remove-Migration 
+    
+  ```
+  
+    
+     - This command has added a Migrations folder to our project, this new folder contains two files:
+        - The Configuration class. This class allows you to configure how Migrations behaves for your context. For this walkthrough we will just use the default configuration. Because there is just a single Code First context in your project, Enable-Migrations has automatically filled in the context type this configuration applies to.
+      An InitialCreate migration. This migration was generated because we already had Code First create a database for us, before we enabled migrations. The code in this scaffolded migration represents the objects that have already been created in the database. In our case that is the Blog table with a BlogId and Name columns. The filename includes a timestamp to help with ordering. If the database had not already been created this InitialCreate migration would not have been added to the project. Instead, the first time we call Add-Migration the code to create these tables would be scaffolded to a new migration.
+      Multiple Models Targeting the Same Database
+      When using versions prior to EF6, only one Code First model could be used to generate/manage the schema of a database. This is the result of a single __MigrationsHistory table per database with no way to identify which entries belong to which model.
+      Starting with EF6, the Configuration class includes a ContextKey property. This acts as a unique identifier for each Code First model. A corresponding column in the __MigrationsHistory table allows entries from multiple models to share the table. By default, this property is set to the fully qualified name of your context.
+      Generating & Running Migrations
+      Code First Migrations has two primary commands that you are going to become familiar with.
+      Add-Migration will scaffold the next migration based on changes you have made to your model since the last migration was created
+      Update-Database will apply any pending migrations to the database
+      We need to scaffold a migration to take care of the new Url property we have added. The Add-Migration command allows us to give these migrations a name, let’s just call ours AddBlogUrl.
+      Run the Add-Migration AddBlogUrl command in Package Manager Console
+      In the Migrations folder we now have a new AddBlogUrl migration. The migration filename is pre-fixed with a timestamp to help with ordering
