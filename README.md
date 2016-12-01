@@ -501,3 +501,31 @@ Go to Object Explorer, Expand (localdb)\MSSQLLocalDB
       We need to scaffold a migration to take care of the new Url property we have added. The Add-Migration command allows us to give these migrations a name, let’s just call ours AddBlogUrl.
       Run the Add-Migration AddBlogUrl command in Package Manager Console
       In the Migrations folder we now have a new AddBlogUrl migration. The migration filename is pre-fixed with a timestamp to help with ordering
+
+## Prepopulate Database and save it to project 
+
+```
+  Exporting databases with SSMS
+  Right-click the desired database in the Object Explorer. Select Tasks > Generate Scripts…
+  The Generate and Publish Scripts wizard will open.
+  Click Next until you are on the Choose Objects page.
+  Select the option called Select specific database objects
+  Check the box next to Tables
+  Click Next
+  On the Set Scripting Options page:
+  Click Advanced
+  In the General section, find the row Types of data to script
+  Set to Schema and data for an export of the complete database.
+  Set to Schema only for an export without data.
+  Set to Data only to only export the current data.
+  Click OK
+  Select Save to file
+  Set the File name and path to desired location using the `...` button.
+  Click Next
+  On the Summary page:
+  Ensure that all parameters are as you need them to be.
+  Click Next
+  On the Save or Publish Scripts page you'll see the progress of the export.
+  Click Finish when complete.
+
+```
